@@ -80,21 +80,6 @@ import {
             }),
             execute: async ( accountData: RenewalInput) => fetchJson(`/api/workflows/renewal`, { method: 'POST', body: JSON.stringify({ chatId, accountData }) })
         },
-        restartRenewalWorkflow: {
-            description: 'Restart durable orchestration of renewal workflow',
-            inputSchema: z.object({
-                runId: z.string(),
-                accountData: z.object({
-                    accountId: z.string(),
-                    effectiveDate: z.string(),
-                    sovFileId: z.string(),
-                    state: z.string(),
-                    brokerEmail: z.string(),
-                    carriers: z.array(z.string()),
-                }),
-            }),
-            execute: async ({ runId, accountData }) => fetchJson(`/api/workflows/renewal/restart`, { method: 'POST', body: JSON.stringify({ runId, accountData }) })
-        },
       }
     })
   
