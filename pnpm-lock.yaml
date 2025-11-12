@@ -101,6 +101,9 @@ importers:
       '@vercel/functions':
         specifier: ^3.3.0
         version: 3.3.0(@aws-sdk/credential-provider-web-identity@3.609.0(@aws-sdk/client-sts@3.928.0))
+      '@workflow/ai':
+        specifier: 4.0.1-beta.13
+        version: 4.0.1-beta.13(ai@5.0.90(zod@3.25.76))(workflow@4.0.1-beta.12(@aws-sdk/client-sts@3.928.0)(@opentelemetry/api@1.9.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3))
       ai:
         specifier: ^5.0.90
         version: 5.0.90(zod@3.25.76)
@@ -2076,6 +2079,12 @@ packages:
     resolution: {integrity: sha512-EPFrBQPJrGjt8lr9kTmio5G57CGILnf4+pKalQNt88cAinXxaWLrvpBTzwG0esx+yreaUoqkFzpgWxTjsgZtlg==}
     engines: {node: '>=20.0.0'}
     hasBin: true
+
+  '@workflow/ai@4.0.1-beta.13':
+    resolution: {integrity: sha512-bpzt2Oa2hdT4wS/RAduzrrJrF7v3+0X/LGTb+ZvxjYPETpZBMFuMUqGY0+JfrwuS8ettpQEF0LuGAwjm/6cU4Q==}
+    peerDependencies:
+      ai: ^5
+      workflow: 4.0.1-beta.13
 
   '@workflow/builders@4.0.1-beta.8':
     resolution: {integrity: sha512-aKBqIgq0wzgUC5r/d0YEOaGd6KovtMqxSgysofjPYNSHcbNjhFpduXgUtp4jjdURAJgIOa4SpNhNEZSbtXGp9A==}
@@ -5529,6 +5538,13 @@ snapshots:
     dependencies:
       '@vercel/oidc': 3.0.3
       mixpart: 0.0.5-alpha.1
+
+  '@workflow/ai@4.0.1-beta.13(ai@5.0.90(zod@3.25.76))(workflow@4.0.1-beta.12(@aws-sdk/client-sts@3.928.0)(@opentelemetry/api@1.9.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3))':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      ai: 5.0.90(zod@3.25.76)
+      workflow: 4.0.1-beta.12(@aws-sdk/client-sts@3.928.0)(@opentelemetry/api@1.9.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
+      zod: 4.1.11
 
   '@workflow/builders@4.0.1-beta.8(@aws-sdk/client-sts@3.928.0)(@opentelemetry/api@1.9.0)':
     dependencies:

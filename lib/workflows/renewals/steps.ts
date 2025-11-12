@@ -1,5 +1,7 @@
 // workflows/renewal.ts
-import { sleep, createWebhook, FatalError, RetryableError, fetch } from 'workflow';
+import { FatalError, RetryableError } from 'workflow';
+import { aiTell } from '../events';
+
 
 export type RenewalInput = {
   accountId: string;
@@ -76,15 +78,25 @@ export async function compileMarketSummary(payload: any) {
   return url as string;
 }
 
-/** ---------- Human-in-the-loop via webhook ---------- */
+/** ---------- Human-in-the-loop via typed hook ---------- */
 
-export async function waitForBrokerApproval(brokerEmail: string) {
-  "use workflow";
-  const webhook = createWebhook({ respondWith: Response.json({ received: true }) });
-  await sendApprovalRequest(brokerEmail, webhook.url);
-  const request = await webhook; // resumes on incoming POST
-  const data = await request.json();
-  return data as { approved: boolean; comment?: string };
+/**
+ * Step function that sends approval request email and emits notification.
+ * Hook creation/awaiting happens in the workflow, not here.
+ */
+export async function sendBrokerApprovalRequest(token: string, brokerEmail: string) {
+  "use step";
+  
+  const approvalUrl = `${BASE}/renewals/approve?token=${encodeURIComponent(token)}`;
+
+  // Send the email
+  await sendApprovalRequest(brokerEmail, approvalUrl);
+
+  // Stream a chat notice
+  await aiTell(
+    `I've emailed ${brokerEmail} a secure approval link. Please check your inbox to continue.`,
+    { token, approvalUrl, brokerEmail }
+  );
 }
 
 export async function sendApprovalRequest(email: string, url: string) {

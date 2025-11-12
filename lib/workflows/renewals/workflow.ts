@@ -1,5 +1,7 @@
-import { getWritable } from 'workflow';
-import { complianceCheck, extractSoV, getLossTrends, quoteCarrier, RenewalInput, waitForBrokerApproval, compileMarketSummary} from './steps';
+import { FatalError, sleep } from 'workflow';
+import { complianceCheck, extractSoV, getLossTrends, quoteCarrier, RenewalInput, sendBrokerApprovalRequest, compileMarketSummary} from './steps';
+import { emitEvent, aiTell } from '../events';
+import { brokerApprovalHook } from './hooks';
 
 
 export async function renewal(input: RenewalInput) {
@@ -21,13 +23,43 @@ export async function renewal(input: RenewalInput) {
     const compliance = await complianceCheck({ quotes, state: input.state });
     await writeProgress({ namespace: 'Renewal', step: 'Checked compliance', message: `Compliance checked: ${compliance.ok ? 'ok' : 'failed'}` });
 
-    const approval = await waitForBrokerApproval(input.brokerEmail);
-    await writeProgress({ namespace: 'Renewal', step: 'Checked approval', message: `Approval checked: ${approval.approved ? 'ok' : 'failed'}` });
+    const token = `renewal:${input.accountId}:${input.effectiveDate}`;
+
+    // Create the hook in workflow context (required)
+    const approval = brokerApprovalHook.create({ token });
+    
+    // Send email and emit notification (step)
+    await sendBrokerApprovalRequest(token, input.brokerEmail);
+
+    // Pause: wait for approval OR timeout (in workflow context)
+    const decision = await Promise.race([
+      approval, // resolved when /api/workflows/renewal/approve calls brokerApprovalHook.resume(token, { ... })
+      (async () => { await sleep("1m"); return { approved: false, comment: "timeout" as const }; })(),
+    ]);
+
+    // Post-outcome notices
+    if (decision.comment === "timeout") {
+      await aiTell(`Approval timed out after 1 minute. You can restart when ready.`, { token });
+    } else if (decision.approved === false) {
+      await aiTell(`Broker requested changes${decision.comment ? `: ${decision.comment}` : ""}.`, { token });
+    } else {
+      await aiTell(`Approval received. Continuing.`, { token });
+    }
+
+    await writeProgress({
+      namespace: "Renewal",
+      step: "Checked approval",
+      message: `Approval: ${decision.approved ? "approved" : `rejected (${decision.comment ?? "no reason"})`}`,
+      data: decision,
+    });
+
+    if (!decision.approved) {
+        throw new FatalError("Broker rejected or timed out");
+    }
 
     const summaryUrl = await compileMarketSummary({
         accountId: input.accountId,
         quotes,
-        notes: approval.comment,
     });
     await writeProgress({ namespace: 'Renewal', step: 'Compiled market summary', message: `Market summary compiled: ${summaryUrl}` });
 
@@ -42,16 +74,7 @@ export async function writeProgress({
     data = {}
 }: { namespace: string, step: string, message: string, data?: unknown }) {
     'use step'
-
-    const now = new Date().toISOString();
-    const composedMessage = `${now} namespace: [${namespace}]\n step: [${step}]\n message: ${message}\n data: ${JSON.stringify(data)}`;
-
-    const writable = getWritable({ namespace });
-
-    const writer =  writable.getWriter()
-
-    await writer.write(composedMessage);
-    return composedMessage;
+    return emitEvent({ namespace, step, message, data });
 }
 
 // num retries
