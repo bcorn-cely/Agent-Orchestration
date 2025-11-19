@@ -1,5 +1,5 @@
 import { cookies } from "next/headers"
-import { Chatbot } from "./chatbot"
+import { Chatbot } from "../chatbot"
 import { createChat, loadChatMessages, convertSelectMessagesToChatUIMessages } from "@/lib/chat"
 import type { ChatUIMessage } from "@/lib/chat"
 import { setChatIdCookie } from "@/actions"
