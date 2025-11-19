@@ -3,7 +3,7 @@
 import { ToolLoopAgent, tool, stepCountIs } from 'ai';
 import { z } from 'zod';
 import { start } from 'workflow/api';
-import { gateway } from '@/lib/ai/provider';
+// import { gateway } from '@/lib/ai/provider';
 import { renewal } from '@/workflows/newfront/workflow';
 
 async function fetchJson(path: string) {
@@ -14,7 +14,7 @@ async function fetchJson(path: string) {
 
 export function createRenewalAgent(modelId: string = 'openai/gpt-4o-mini') {
   return new ToolLoopAgent({
-    model: gateway(modelId),
+    model: modelId,
     instructions: 'You are a helpful insurance assistant.',
     stopWhen: stepCountIs(20),
     tools: {

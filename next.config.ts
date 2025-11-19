@@ -11,19 +11,11 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/included-health',
+        destination: '/coupa',
         permanent: true,
       },
     ]
   },
-  async rewrites() {
-    return [
-      {
-        source: '/included-health',
-        destination: '/',
-      }
-    ]
-  }
 }
 
 const workflowConfig = {
