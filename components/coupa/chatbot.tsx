@@ -7,7 +7,7 @@ import { DefaultChatTransport, lastAssistantMessageIsCompleteWithApprovalRespons
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { X, Send, Maximize2, Minimize2, Settings, ShoppingCart } from "lucide-react"
+import { X, Send, Maximize2, Minimize2, Settings, ShoppingCart } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { setChatIdCookie } from "@/actions"
 import { ThinkingLoader } from "@/components/thinking-loader"
@@ -29,6 +29,7 @@ function ProcurementRequestToolView({
   invocation: any
   addToolApprovalResponse: (response: { id: string; approved: boolean }) => void
 }) {
+  console.log('where is my approval ', { invocation })
   if (invocation.state === 'approval-requested') {
     return (
       <div className="p-3 border rounded mb-2 bg-yellow-50 dark:bg-yellow-900/20 max-w-[85%]">
@@ -93,6 +94,7 @@ function ProcurementRequestToolView({
 }
 
 const AI_MODELS = [
+  { id: '', name: 'No Model Selected', provider: 'None' },
   { id: "openai/gpt-5-mini", name: "GPT-4o Mini", provider: "OpenAI" },
   { id: "openai/gpt-4o", name: "GPT-4o", provider: "OpenAI" },
   { id: "anthropic/claude-sonnet-4.5", name: "Claude Sonnet 4.5", provider: "Anthropic" },
@@ -195,8 +197,8 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full shadow-2xl transition-all duration-300",
-          "bg-primary hover:bg-primary/90 text-primary-foreground hover:scale-110",
-          "before:absolute before:inset-0 before:rounded-full before:bg-primary/20 before:animate-ping before:duration-2000",
+          "bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white hover:scale-110",
+          "before:absolute before:inset-0 before:rounded-full before:bg-[#FF6B35]/20 before:animate-ping before:duration-2000",
           isOpen && "rotate-180 scale-95",
         )}
         size="icon"
@@ -212,13 +214,13 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
         <div ref={chatRef}>
           <Card
             className={cn(
-              "pt-0 pb-6 flex flex-col shadow-2xl border-2 border-primary/20 bg-card backdrop-blur-sm",
+              "pt-0 pb-6 flex flex-col shadow-2xl border-2 border-[#FF6B35]/20 bg-card backdrop-blur-sm",
               isModalMode
                 ? "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[90vw] max-w-4xl h-[85vh]"
                 : "fixed bottom-24 right-6 z-40 w-[420px] h-[650px]",
             )}
           >
-            <div className="px-6 pb-5 pt-4 border-b border-primary/20 bg-gradient-to-r from-primary via-primary/90 to-accent text-primary-foreground rounded-t-xl" style={{ minHeight: 'fit-content' }}>
+            <div className="px-6 pb-5 pt-4 border-b border-[#FF6B35]/20 bg-gradient-to-r from-[#FF6B35] via-[#FF6B35]/90 to-[#FF8C5A] text-white rounded-t-xl" style={{ minHeight: 'fit-content' }}>
               <div className="flex items-center justify-between" style={{ contain: 'layout style' }}>
                 <div className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
@@ -230,7 +232,7 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 min-w-8 min-h-8 hover:bg-primary-foreground/10 text-primary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 outline-none focus:outline-none data-[state=open]:bg-primary-foreground/10"
+                        className="h-8 w-8 min-w-8 min-h-8 hover:bg-white/10 text-white focus-visible:ring-0 focus-visible:ring-offset-0 outline-none focus:outline-none data-[state=open]:bg-white/10"
                         style={{ willChange: 'auto', transform: 'translateZ(0)' }}
                       >
                         <Settings className="h-4 w-4" />
@@ -257,7 +259,7 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
                           }}
                           className={cn(
                             "cursor-pointer",
-                            selectedModel === model.id && "bg-accent text-accent-foreground"
+                            selectedModel === model.id && "bg-[#FF6B35] text-white"
                           )}
                         >
                           <div className="flex flex-col">
@@ -276,7 +278,7 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsModalMode(!isModalMode)}
-                    className="h-8 w-8 hover:bg-primary-foreground/10 text-primary-foreground"
+                    className="h-8 w-8 hover:bg-white/10 text-white"
                   >
                     {isModalMode ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                   </Button>
@@ -289,27 +291,31 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
             <div ref={messagesRef} className="flex-1 overflow-y-auto p-6 space-y-4 scroll-smooth">
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-                    <ShoppingCart className="h-8 w-8 text-primary" />
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#FF6B35]/10 mb-4">
+                    <ShoppingCart className="h-8 w-8 text-[#FF6B35]" />
                   </div>
-                  <p className="text-base font-medium text-foreground mb-2">Welcome to Coupa</p>
-                  <p className="text-sm mb-4">I can help you with:</p>
+                  <p className="text-base font-medium text-foreground mb-2">Welcome to Coupa Procurement</p>
+                  <p className="text-sm mb-4">Your AI-powered Total Spend Management assistant</p>
                   <div className="grid gap-2 text-left max-w-xs mx-auto">
                     <div className="flex items-start gap-2 text-sm">
-                      <span className="text-primary mt-0.5">•</span>
-                      <span>Creating procurement requests</span>
+                      <span className="text-[#FF6B35] mt-0.5">•</span>
+                      <span>Submit procurement requests with policy checks</span>
                     </div>
                     <div className="flex items-start gap-2 text-sm">
-                      <span className="text-primary mt-0.5">•</span>
-                      <span>Finding suppliers and getting quotes</span>
+                      <span className="text-[#FF6B35] mt-0.5">•</span>
+                      <span>Get real-time supplier quotes and compare pricing</span>
                     </div>
                     <div className="flex items-start gap-2 text-sm">
-                      <span className="text-primary mt-0.5">•</span>
-                      <span>Checking policy compliance</span>
+                      <span className="text-[#FF6B35] mt-0.5">•</span>
+                      <span>Verify budget availability across departments</span>
                     </div>
                     <div className="flex items-start gap-2 text-sm">
-                      <span className="text-primary mt-0.5">•</span>
-                      <span>Creating purchase orders</span>
+                      <span className="text-[#FF6B35] mt-0.5">•</span>
+                      <span>Automate purchase orders and approvals</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <span className="text-[#FF6B35] mt-0.5">•</span>
+                      <span>Track spend analytics and compliance</span>
                     </div>
                   </div>
                 </div>
@@ -321,7 +327,7 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
                     className={cn(
                       "max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm",
                       message.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-sm"
+                        ? "bg-[#FF6B35] text-white rounded-br-sm"
                         : "bg-muted/60 text-gray-900 rounded-bl-sm border border-border/50",
                     )}
                   >
@@ -376,13 +382,25 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
                 </div>
               ))}
 
-              {status === "submitted" && (
-                <div className="flex justify-start">
-                  <div className="bg-muted/60 rounded-2xl rounded-bl-sm px-4 py-3 border border-border/50 shadow-sm">
-                    <ThinkingLoader />
+              {(() => {
+                // Show loader when:
+                // 1. Status is "submitted" (request sent, waiting for response)
+                // 2. OR last message is assistant but has no text content yet (streaming started but no content)
+                const lastMessage = messages[messages.length - 1];
+                const isAssistantWithoutContent = lastMessage?.role === "assistant" && 
+                  (!lastMessage.parts || 
+                   lastMessage.parts.filter((p: any) => p.type === "text" && p.text?.trim()).length === 0);
+                
+                const shouldShowLoader = status === "submitted" || isAssistantWithoutContent;
+                
+                return shouldShowLoader ? (
+                  <div className="flex justify-start">
+                    <div className="bg-muted/60 rounded-2xl rounded-bl-sm px-4 py-3 border border-border/50 shadow-sm">
+                      <ThinkingLoader />
+                    </div>
                   </div>
-                </div>
-              )}
+                ) : null;
+              })()}
             </div>
 
             <form onSubmit={handleSubmit} className="px-4 pt-4 border-t border-border/50">
@@ -390,8 +408,8 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Request items, check suppliers, create POs..."
-                  className="flex-1 rounded-xl bg-muted/50 border-border/50 focus-visible:ring-primary"
+                  placeholder="Request office supplies, check supplier quotes, create purchase order..."
+                  className="flex-1 rounded-xl bg-muted/50 border-border/50 focus-visible:ring-[#FF6B35]"
                   autoComplete="off"
                   disabled={status === "submitted"}
                 />
@@ -399,7 +417,7 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
                   type="submit"
                   size="icon"
                   disabled={status === "submitted" || !input.trim()}
-                  className="rounded-xl h-10 w-10 bg-primary hover:bg-primary/90"
+                  className="rounded-xl h-10 w-10 bg-[#FF6B35] hover:bg-[#FF6B35]/90"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -411,4 +429,3 @@ export function CoupaChatbot({ id, initialMessages }: { id: string; initialMessa
     </>
   )
 }
-

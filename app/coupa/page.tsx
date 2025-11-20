@@ -2,267 +2,339 @@ import { CoupaChatbotWrapper } from "@/components/coupa/chatbot-wrapper"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, DollarSign, FileText, CheckCircle2, Clock, AlertCircle, TrendingUp, Users } from "lucide-react"
+import { ShoppingCart, DollarSign, FileText, TrendingUp, Network, Zap, Shield, Bot, ArrowRight, BarChart3, Users2, Sparkles } from 'lucide-react'
 import Link from "next/link"
 
 export default function CoupaDashboard() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <main className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+      <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
-              <ShoppingCart className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FF6B35]">
+              <svg viewBox="0 0 24 24" className="h-6 w-6 fill-white">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" />
+              </svg>
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-lg font-bold leading-none tracking-tight text-foreground">
+              <span className="text-xl font-bold leading-none text-foreground">
                 Coupa
               </span>
               <span className="text-[10px] font-medium uppercase leading-none tracking-wider text-muted-foreground">
-                Spend Management
+                Total Spend Management
               </span>
             </div>
           </div>
           <nav className="hidden items-center gap-6 md:flex">
-            <Link href="/" className="text-sm font-medium text-foreground/70 transition-colors hover:text-foreground">
+            <Link href="/" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Home
             </Link>
-            <Link href="/coupa" className="text-sm font-medium text-primary transition-colors hover:text-primary/80">
-              Dashboard
+            <Link href="/coupa" className="text-sm font-medium text-[#FF6B35] transition-colors hover:text-[#FF6B35]/80">
+              Platform
             </Link>
+            <Button size="sm" className="bg-[#FF6B35] text-white hover:bg-[#FF6B35]/90">
+              Get Started
+            </Button>
           </nav>
         </div>
       </header>
 
-      <div className="container px-6 py-8 space-y-6">
-        {/* Welcome Section */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Welcome back, Alex</h1>
-          <p className="text-muted-foreground">
-            Manage your procurement requests and track spend with AI-powered insights
+      {/* Hero Section */}
+      <section className="border-b bg-gradient-to-b from-background to-muted/30">
+        <div className="container px-6 py-16">
+          <div className="mx-auto max-w-3xl text-center space-y-6">
+            <Badge className="bg-[#FF6B35]/10 text-[#FF6B35] border-[#FF6B35]/20 hover:bg-[#FF6B35]/20">
+              <Sparkles className="mr-1 h-3 w-3" />
+              AI-Native Platform
+            </Badge>
+            <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+              Total Spend Management Powered by AI
+            </h1>
+            <p className="text-lg text-muted-foreground text-pretty">
+              Optimize direct and indirect spend across finance, procurement, and supply chain. 
+              Powered by $8T+ in real-world spend data from 10M+ buyers and suppliers.
+            </p>
+            <div className="flex items-center justify-center gap-4 pt-4">
+              <Button size="lg" className="bg-[#FF6B35] text-white hover:bg-[#FF6B35]/90">
+                Start Procurement
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button size="lg" variant="outline">
+                View Demo
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="container px-6 py-12 space-y-12">
+        {/* Platform Modules */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-3xl font-bold tracking-tight">Complete Platform Modules</h2>
+            <p className="text-muted-foreground">
+              End-to-end solutions for every stage of your spend lifecycle
+            </p>
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="border-2 hover:border-[#FF6B35]/50 transition-colors">
+              <CardHeader>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/10 mb-4">
+                  <ShoppingCart className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <CardTitle>Procure-to-Pay</CardTitle>
+                <CardDescription>
+                  Streamline purchasing and payments with automated intake, approvals, and supplier payments
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                    Automated requisitions
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                    Smart approvals
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                    On-contract spend optimization
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-[#FF6B35]/50 transition-colors">
+              <CardHeader>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10 mb-4">
+                  <Network className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <CardTitle>Source-to-Contract</CardTitle>
+                <CardDescription>
+                  Simplify sourcing, accelerate contract creation, and monitor supplier risk
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                    Strategic sourcing
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                    Contract lifecycle management
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                    Supplier risk monitoring
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-[#FF6B35]/50 transition-colors">
+              <CardHeader>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-500/10 mb-4">
+                  <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <CardTitle>AP Automation</CardTitle>
+                <CardDescription>
+                  Automate invoicing, payments, expense management, and fraud detection
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    Invoice processing
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    Virtual card payments
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    Fraud prevention
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-[#FF6B35]/50 transition-colors">
+              <CardHeader>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/10 mb-4">
+                  <TrendingUp className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                </div>
+                <CardTitle>Supply Chain Collaboration</CardTitle>
+                <CardDescription>
+                  Secure critical supplies, track materials, and resolve supply imbalances
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+                    Real-time visibility
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+                    Supply risk management
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+                    Supplier collaboration
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-[#FF6B35]/50 transition-colors">
+              <CardHeader>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-500/10 mb-4">
+                  <DollarSign className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
+                </div>
+                <CardTitle>Treasury & Cash</CardTitle>
+                <CardDescription>
+                  Global cash visibility, liquidity protection, and fraud controls
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-500" />
+                    Cash position visibility
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-500" />
+                    AI fraud detection
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-500" />
+                    Liquidity optimization
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-[#FF6B35]/50 transition-colors">
+              <CardHeader>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#FF6B35]/10 mb-4">
+                  <BarChart3 className="h-6 w-6 text-[#FF6B35]" />
+                </div>
+                <CardTitle>Spend Analytics</CardTitle>
+                <CardDescription>
+                  AI-powered insights to optimize spending and predict disruptions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
+                    Predictive analytics
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
+                    Spend optimization
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
+                    Real-time reporting
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* AI-Powered Features */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2">
+            <Badge className="bg-[#FF6B35]/10 text-[#FF6B35] border-[#FF6B35]/20">
+              <Bot className="mr-1 h-3 w-3" />
+              Coupa AI
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight">AI That Knows Your Business</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Powered by over $8 trillion in real-world spend data from a network of 10M+ buyers and suppliers
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-blue-500/20">
+              <CardHeader>
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 mb-2">
+                  <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <CardTitle className="text-lg">Automate Tasks</CardTitle>
+                <CardDescription>
+                  Eliminate manual work with intelligent automation across procurement workflows
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-purple-500/5 to-purple-500/10 border-purple-500/20">
+              <CardHeader>
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10 mb-2">
+                  <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <CardTitle className="text-lg">Predict Disruptions</CardTitle>
+                <CardDescription>
+                  Stay ahead of supply chain risks with AI-powered predictive analytics
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-green-500/5 to-green-500/10 border-green-500/20">
+              <CardHeader>
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 mb-2">
+                  <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
+                <CardTitle className="text-lg">Optimize Strategies</CardTitle>
+                <CardDescription>
+                  Make smarter decisions with AI recommendations based on global spend patterns
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </section>
+
+        {/* Network Stats */}
+        <section className="rounded-lg border bg-gradient-to-br from-[#FF6B35]/5 to-[#FF6B35]/10 p-8">
+          <div className="grid gap-8 md:grid-cols-3 text-center">
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-[#FF6B35]">$8T+</div>
+              <p className="text-sm font-medium text-muted-foreground">Real-World Spend Data</p>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-[#FF6B35]">10M+</div>
+              <p className="text-sm font-medium text-muted-foreground">Buyers & Suppliers</p>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-[#FF6B35]">3,000+</div>
+              <p className="text-sm font-medium text-muted-foreground">Enterprise Customers</p>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="rounded-lg border bg-muted/50 p-12 text-center space-y-6">
+          <h2 className="text-3xl font-bold tracking-tight">Ready to Transform Your Spend Management?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Join thousands of enterprises optimizing their procurement, finance, and supply chain operations with Coupa
           </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">3</div>
-              <p className="text-xs text-muted-foreground">Awaiting approval</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Month Spend</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$24,500</div>
-              <p className="text-xs text-muted-foreground">+12% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active POs</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">8</div>
-              <p className="text-xs text-muted-foreground">In progress</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Approved Suppliers</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">127</div>
-              <p className="text-xs text-muted-foreground">In your network</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Pending Requests */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Pending Procurement Requests</CardTitle>
-              <CardDescription>Requests awaiting your approval or action</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start gap-4 p-4 border rounded-lg">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500/10">
-                  <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">Office Furniture - 50 Chairs</h4>
-                    <Badge className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20">Pending Approval</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Department: Facilities</p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <DollarSign className="h-3 w-3" />
-                    <span>$12,500</span>
-                    <span className="mx-1">•</span>
-                    <span>Urgent</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 border rounded-lg">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-                  <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">IT Equipment - Laptops</h4>
-                    <Badge className="bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20">Supplier Selection</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Department: IT</p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <DollarSign className="h-3 w-3" />
-                    <span>$8,900</span>
-                    <span className="mx-1">•</span>
-                    <span>Routine</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 border rounded-lg">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10">
-                  <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">Marketing Materials</h4>
-                    <Badge className="bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20">Compliance Review</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Department: Marketing</p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <DollarSign className="h-3 w-3" />
-                    <span>$3,200</span>
-                    <span className="mx-1">•</span>
-                    <span>Routine</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Get started quickly</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90" variant="default">
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                New Procurement Request
-              </Button>
-              <Button className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90" variant="default">
-                <FileText className="mr-2 h-4 w-4" />
-                View Purchase Orders
-              </Button>
-              <Button className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90" variant="default">
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Spend Analytics
-              </Button>
-              <Button className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90" variant="default">
-                <Users className="mr-2 h-4 w-4" />
-                Manage Suppliers
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Your recent procurement activities</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start gap-4 p-4 border rounded-lg">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
-                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">Purchase Order Created</h4>
-                    <span className="text-xs text-muted-foreground">2 hours ago</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    PO-2024-001234 for office supplies has been created and sent to supplier
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 border rounded-lg">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-                  <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">Request Approved</h4>
-                    <span className="text-xs text-muted-foreground">1 day ago</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Procurement request for IT equipment has been approved by finance manager
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 border rounded-lg">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10">
-                  <ShoppingCart className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">Supplier Selected</h4>
-                    <span className="text-xs text-muted-foreground">3 days ago</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Best supplier selected from 5 options for marketing materials procurement
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Budget Overview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Budget Overview</CardTitle>
-              <CardDescription>Your department budget status</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Allocated</span>
-                  <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">On Track</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">$150,000 / $200,000</p>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-primary h-2 rounded-full" style={{ width: '75%' }}></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">This Month</span>
-                </div>
-                <p className="text-sm text-muted-foreground">$24,500</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Remaining</span>
-                </div>
-                <p className="text-sm text-muted-foreground">$25,500</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+          <div className="flex items-center justify-center gap-4">
+            <Button size="lg" className="bg-[#FF6B35] text-white hover:bg-[#FF6B35]/90">
+              Request a Demo
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button size="lg" variant="outline">
+              Contact Sales
+            </Button>
+          </div>
+        </section>
       </div>
 
       {/* Chatbot */}
@@ -270,4 +342,3 @@ export default function CoupaDashboard() {
     </main>
   )
 }
-

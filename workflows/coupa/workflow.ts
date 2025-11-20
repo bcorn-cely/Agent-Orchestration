@@ -12,7 +12,7 @@ import { aiTell } from '../events';
 import { procurementApprovalHook } from './hooks';
 
 export async function procurementRequest(input: ProcurementRequestInput) {
-  'use workflow';
+  'use workflow'
 
   const writable = getWritable();
   const requestId = `procurement:${input.employeeId}:${Date.now()}`;
@@ -99,11 +99,8 @@ export async function procurementRequest(input: ProcurementRequestInput) {
   }
 
   // Step 4: Determine if approval is required
-  // Approval required if: high cost, policy warnings, or critical urgency
-  const requiresApproval = 
-    (estimatedCost > 5000) || 
-    (compliance.warnings && compliance.warnings.length > 0) ||
-    (input.urgency === 'critical');
+  // Approval required if: high cost, policy warnings, or critical urgency, true here for demo purposes
+  const requiresApproval = true;
 
   if (requiresApproval) {
     const token = requestId;

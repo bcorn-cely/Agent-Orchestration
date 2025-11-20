@@ -4,15 +4,9 @@ import { Inter, Geist_Mono, Cormorant_Garamond } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
-const _inter = Inter({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
-const _cormorantGaramond = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-})
 
 export const metadata: Metadata = {
-  title: "Forcepoint Intelligence - AI Assistant",
+  title: "Coupa Intelligence - AI Assistant",
   description: "Newfront Insurance Internal AI Assistant",
   generator: "v0.app",
   icons: {

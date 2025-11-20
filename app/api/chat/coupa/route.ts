@@ -3,27 +3,37 @@ import {
   createUIMessageStreamResponse,
   validateUIMessages,
   convertToModelMessages,
-  createUIMessageStream,
+  createAgentUIStream,
   generateId,
 } from 'ai';
 import { createProcurementAgent } from '@/workflows/coupa/agent/procurement-agent';
 import { loadChatMessages, convertSelectMessagesToChatUIMessages, convertUIMessagesToNewMessages, saveChatMessages, getChat, type ChatUIMessage } from '@/lib/chat';
 import { createChat } from '@/db/operations/chat';
-import { start } from 'workflow/api';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60;
+
 
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { messages, chatId, model: modelId } = body as {
+  const { 
+    messages, 
+    chatId, 
+    model: modelId,
+    // Extract callOptions from request body for AI SDK 6 A/B testing
+    // Note: taskComplexity is NOT a runtime input - it's predetermined by the developer
+    // based on which tools are used or the nature of the request
+  } = body as {
     messages?: ChatUIMessage[];
     chatId?: string;
-    model?: string;
+    model?: string; // Runtime input for model selection
   };
-  console.log('model id ', modelId);
+  
+  console.log('[API Route] Received request with:', {
+    modelId: modelId || 'No Model Selected',
+  }, '\n\n');
+
   // Handle chat history if chatId is provided
   // IMPORTANT: When messages are provided (including after approval), use them directly
   // The client sends the complete conversation state, so we should trust it
@@ -38,65 +48,60 @@ export async function POST(req: Request) {
     // If messages are provided, use them directly (client has the full conversation state)
     // Only load from DB if no messages are provided
     if (messages && messages.length > 0) {
-      allMessages = messages;
+      const newUserMessage = messages[messages.length - 1];
       
-      // Save new user messages to DB for persistence (avoid duplicates)
-      const previousMessages = await loadChatMessages(chatId);
-      const existingIds = new Set(previousMessages.map(m => m.id));
-      const newUserMessages = allMessages.filter(m => m.role === 'user' && !existingIds.has(m.id));
-      if (newUserMessages.length > 0) {
-        const userMessagesToSave = convertUIMessagesToNewMessages(newUserMessages, chatId);
-        await saveChatMessages({ messages: userMessagesToSave });
+      console.log('already have messages');
+        const userMessagesToSave = convertUIMessagesToNewMessages([newUserMessage], chatId);
+        saveChatMessages({ messages: userMessagesToSave });
+      
       }
-    } else {
+    else {
       // No messages provided, load from DB
       const previousMessages = await loadChatMessages(chatId);
       allMessages = convertSelectMessagesToChatUIMessages(previousMessages);
     }
   }
 
-  // Filter out invalid messages (empty parts, etc.) before validation
-  const validMessages = allMessages.filter((message) => {
-    // Messages must have at least one part
-    if (!message.parts || message.parts.length === 0) {
-      return false;
-    }
-    return true;
-  });
-
-
   // Validate messages
   const validatedMessages = await validateUIMessages({
-    messages: validMessages,
+    messages: allMessages,
+    // messages: validMessages,
   });
 
-  const modelMessages = convertToModelMessages(validatedMessages);
+  // Create agent with default model(model will be selected dynamically via prepareCall based on callOptions)
+  const defaultModelId = 'openai/gpt-4o-mini';
+  const agent = createProcurementAgent(defaultModelId);
 
+  // Build callOptions object for AI SDK 6
+  // Only abTestVariant is passed as runtime input (user-selectable in chat)
+  // taskComplexity is determined automatically by prepareCall() based on tools/prompt
+  const callOptions = modelId ? { selectedModel: modelId } : undefined;
 
-  // 1) Create agent with the selected model (default to gpt-4o-mini if not provided)
-  const selectedModelId = modelId || 'openai/gpt-4o-mini';
-
-  const run = await start(createProcurementAgent, [modelMessages, selectedModelId]);
-
-  const wrappedStream = createUIMessageStream({
-    execute: async ({writer}) => {
-        writer.merge(run.readable);
-    },
-    onFinish: async ({responseMessage}) => {
-        console.log('responseMessage', responseMessage);
+  // Create agent stream with callOptions
+  // The agent's prepareCall() function will:
+  // 1. Determine task complexity based on tools/prompt (predetermined by developer)
+  // 2. Route to A/B test variants if specified (runtime input from user)
+  // 3. Select appropriate model and adjust parameters accordingly
+  const agentStream = await createAgentUIStream({
+    agent,
+    messages: validatedMessages,
+    // Pass callOptions to the agent - enables A/B testing (runtime input)
+    // Task complexity is determined automatically in prepareCall()
+    options: callOptions,
+    sendStart: true,
+    sendFinish: true,
+    onFinish: async ({ responseMessage }: any) => {
         if (responseMessage && chatId) {
             const newResponseMessage = responseMessage as ChatUIMessage;
             newResponseMessage.id =  newResponseMessage.id || generateId();
             const assistantMessages = convertUIMessagesToNewMessages([newResponseMessage], chatId);
             await saveChatMessages({ messages: assistantMessages });
         }
-        if('approval' in responseMessage) {
-            console.log('approval', responseMessage.approval);
-        }
-        
     }
   })
+
+
   // @ts-ignore
-  return createUIMessageStreamResponse({ stream: wrappedStream });
+  return createUIMessageStreamResponse({ stream: agentStream });
 }
 
