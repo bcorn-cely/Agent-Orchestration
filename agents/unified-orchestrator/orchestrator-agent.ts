@@ -15,12 +15,12 @@ import { ToolLoopAgent } from 'ai'
 import { z } from 'zod';
 import { tool } from 'ai';
 import { start } from 'workflow/api';
-import { orgValidation } from '../org-validation/workflow';
-import { dealVerification } from '../deal-verification/workflow';
-import { teacherVerification } from '../teacher-verification/workflow';
-import { OrgValidationInput } from '../org-validation/steps';
-import { DealVerificationInput } from '../deal-verification/steps';
-import { TeacherVerificationInput } from '../teacher-verification/steps';
+import { orgValidation } from '../../workflows/org-validation/workflow';
+import { dealVerification } from '../deal-verification';
+import { teacherVerification } from '../teacher-verification';
+import { OrgValidationInput } from '../../workflows/org-validation/steps';
+import type { DealVerificationInput } from '../deal-verification/types';
+import type { TeacherVerificationInput } from '../teacher-verification/types';
 
 /**
  * Organization Validation Tool
@@ -43,7 +43,6 @@ const orgValidateTool = tool({
       message: `Organization validation workflow started for ${input.domain}. Run ID: ${run.runId}`,
     };
   },
-  needsApproval: true,
 });
 
 /**
@@ -65,22 +64,24 @@ const dealVerifyTool = tool({
       partnerUrl: input.partnerUrl,
     });
     
-    const run = await start(dealVerification, [input]);
+    const result = await dealVerification(input);
     return {
-      runId: run.runId,
-      offerId: input.offerId,
+      verified: result.verified,
+      offerValid: result.offerValid,
+      offerId: result.offerId,
       partnerUrl: input.partnerUrl,
-      message: `Deal verification workflow started. Run ID: ${run.runId}`,
+      failureType: result.failureType,
+      method: result.verificationDetails.method,
+      message: `Deal verification completed. Verified: ${result.verified}, Valid: ${result.offerValid}`,
     };
   },
-  needsApproval: true,
 });
 
 /**
  * Teacher Verification Tool
  */
 const teacherVerifyTool = tool({
-  description: 'Verify a teacher community membership via state registry database lookup. Requires MSR approval before completion. Implements 4-step flow: copy ID → query registry → validate → approve.',
+  description: 'Verify a teacher community membership via state registry database lookup. Implements 3-step flow: copy ID → query registry → validate. Returns verification result immediately.',
   inputSchema: z.object({
     memberId: z.string().optional().describe('Member ID number (if available)'),
     memberName: z.string().optional().describe('Member name (required if no memberId)'),
@@ -95,15 +96,16 @@ const teacherVerifyTool = tool({
       msrId: input.msrId,
     });
     
-    const run = await start(teacherVerification, [input]);
+    const result = await teacherVerification(input);
     return {
-      runId: run.runId,
-      memberId: input.memberId,
-      state: input.state,
-      message: `Teacher verification workflow started. Run ID: ${run.runId}`,
+      verificationId: result.verificationId,
+      verified: result.verified,
+      memberId: result.memberId,
+      state: result.state,
+      registryMatch: result.registryMatch,
+      message: `Teacher verification completed. Verified: ${result.verified}`,
     };
   },
-  needsApproval: true,
 });
 
 
@@ -174,8 +176,9 @@ export function createUnifiedOrchestratorAgent(defaultModelId: string = 'openai/
    - Requires: partnerUrl, and optionally offerId/shopUrl/emailContent
 
 4. **Teacher Verification** - Verify teacher community membership
-   - Use teacherVerify tool to start verification workflow
+   - Use teacherVerify tool to verify teacher membership
    - Requires: state, msrId, and either memberId or (memberName + dateOfBirth)
+   - Returns verification result immediately
 
 **Your Approach:**
 1. Understand what the user wants to accomplish
@@ -194,25 +197,15 @@ Be helpful, clear, and professional. Guide users to the right workflow and gathe
       dealVerify: dealVerifyTool,
       teacherVerify: teacherVerifyTool,
     },
-    prepareCall: ({ options, model, instructions, prompt, tools, messages, ...settings }) => {
-      // Only do complexity analysis if we have prompt or messages
-      // If neither exists, use default model (this can happen during tool execution)
+    prepareCall: ({ options, model, instructions, prompt, tools, ...settings }) => {
+      // Determine model based on task complexity from prompt
       let selectedModelId = model; // Default to provided model
       
-      if (prompt || (messages && messages.length > 0)) {
-        // Extract text for complexity analysis from prompt or last message
-        let promptText: string | undefined;
-        if (prompt) {
-          promptText = Array.isArray(prompt) 
-            ? prompt.map((p: any) => typeof p === 'string' ? p : p.text || '').join(' ')
-            : String(prompt);
-        } else if (messages && messages.length > 0) {
-          // Extract text from last user message if prompt not available
-          const lastMessage = messages[messages.length - 1];
-          if (lastMessage?.role === 'user' && typeof lastMessage.content === 'string') {
-            promptText = lastMessage.content;
-          }
-        }
+      if (prompt) {
+        // Extract text for complexity analysis from prompt
+        const promptText = Array.isArray(prompt) 
+          ? prompt.map((p: any) => typeof p === 'string' ? p : p.text || '').join(' ')
+          : String(prompt);
         
         const taskComplexity = determineTaskComplexity(promptText);
         selectedModelId = options?.selectedModel || selectModel(taskComplexity);
@@ -221,15 +214,14 @@ Be helpful, clear, and professional. Guide users to the right workflow and gathe
         selectedModelId = options?.selectedModel || model;
       }
       
-      // Return settings - preserve prompt and messages if provided, only modify model
+      // Return settings - preserve prompt if provided, only modify model
       return {
         ...settings,
         model: selectedModelId,
         instructions,
         tools,
-        // Preserve prompt and messages if they were provided
+        // Preserve prompt if provided
         ...(prompt !== undefined && { prompt }),
-        ...(messages !== undefined && { messages }),
       };
     },
   });

@@ -1,7 +1,9 @@
 /**
- * Deal Verification Workflow
+ * Deal Verification Agent
  * 
- * This workflow verifies retail deals/offers by simulating customer journeys.
+ * Main entry point for deal verification functionality.
+ * Verifies retail deals/offers by simulating customer journeys.
+ * 
  * Supports two modes:
  * 1. Playwright mode: Full browser automation (if available)
  * 2. HTTP probe mode: HTTP requests + content extraction (fallback)
@@ -17,22 +19,19 @@ import {
   fetchOfferDetails,
   verifyOfferWithPlaywright,
   verifyOfferWithHttpProbe,
-  DealVerificationInput,
-  DealVerificationResult,
-} from './steps';
+} from './operations';
+import type { DealVerificationInput, DealVerificationResult } from './types';
 
 // Feature flag: Use HTTP probes only (skip Playwright)
 const USE_HTTP_PROBES_ONLY = process.env.USE_HTTP_PROBES_ONLY === 'true';
 
 /**
- * Main Deal Verification Workflow Function
+ * Main Deal Verification Function
  * 
  * @param input - Offer details (from Shop or email)
  * @returns Verification result with artifacts and failure classification
  */
 export async function dealVerification(input: DealVerificationInput): Promise<DealVerificationResult> {
-  'use workflow'
-  
   const startTime = Date.now();
   
   console.log(`[Deal Verification] Started`, {
@@ -79,13 +78,16 @@ export async function dealVerification(input: DealVerificationInput): Promise<De
     } catch (error) {
       // Fallback to HTTP probe if Playwright fails
       console.log(`[Deal Verification] Playwright failed, falling back to HTTP probe`, error);
-      verificationResult = await verifyOfferWithHttpProbe({
+      const fallbackResult = await verifyOfferWithHttpProbe({
         partnerUrl,
         expectedDiscount,
         expectedPrice,
       });
-      verificationResult.failureType = 'technical';
-      verificationResult.error = error instanceof Error ? error.message : 'Playwright unavailable';
+      verificationResult = {
+        ...fallbackResult,
+        failureType: 'technical' as const,
+        error: error instanceof Error ? error.message : 'Playwright unavailable',
+      };
     }
   }
   

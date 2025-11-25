@@ -4,15 +4,13 @@
  * API endpoint to trigger deal verification workflow.
  */
 
-import { RequestWithResponse } from 'workflow';
-import { start } from 'workflow/api';
-import { dealVerification } from '@/workflows/deal-verification/workflow';
-import { DealVerificationInput } from '@/workflows/deal-verification/steps';
+import { dealVerification } from '@/agents/deal-verification';
+import type { DealVerificationInput } from '@/agents/deal-verification/types';
 
 /**
  * POST Handler for Deal Verification
  */
-export async function POST(req: RequestWithResponse) {
+export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { offerId, shopUrl, emailContent, partnerUrl, expectedDiscount, expectedPrice } = body;
@@ -39,11 +37,11 @@ export async function POST(req: RequestWithResponse) {
       expectedPrice,
     };
     
-    const run = await start(dealVerification, [input]);
+    const result = await dealVerification(input);
     
     return Response.json({
       ok: true,
-      runId: run.runId,
+      result,
       offerId,
     });
   } catch (error) {

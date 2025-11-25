@@ -4,15 +4,13 @@
  * API endpoint to trigger teacher verification workflow.
  */
 
-import { RequestWithResponse } from 'workflow';
-import { start } from 'workflow/api';
-import { teacherVerification } from '@/workflows/teacher-verification/workflow';
-import { TeacherVerificationInput } from '@/workflows/teacher-verification/steps';
+import { teacherVerification } from '@/agents/teacher-verification';
+import type { TeacherVerificationInput } from '@/agents/teacher-verification/types';
 
 /**
  * POST Handler for Teacher Verification
  */
-export async function POST(req: RequestWithResponse) {
+export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { memberId, memberName, dateOfBirth, state, msrId } = body;
@@ -45,11 +43,11 @@ export async function POST(req: RequestWithResponse) {
       msrId,
     };
     
-    const run = await start(teacherVerification, [input]);
+    const result = await teacherVerification(input);
     
     return Response.json({
       ok: true,
-      runId: run.runId,
+      result,
       memberId,
     });
   } catch (error) {

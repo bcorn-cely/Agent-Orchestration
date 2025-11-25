@@ -1,42 +1,35 @@
 /**
- * Teacher Verification Workflow
+ * Teacher Verification Agent
  * 
- * This workflow verifies teacher community membership via database lookup.
- * Implements the 4-step support flow:
+ * Main entry point for teacher verification functionality.
+ * Verifies teacher community membership via database lookup.
+ * 
+ * Implements the verification flow:
  * 1. Copy member ID (or Name + DOB)
- * 2. Open state registry lookup website
- * 3. Find member in registry and confirm details
- * 4. Approve community verification in Support tool
+ * 2. Query state registry database
+ * 3. Validate member details and employment
+ * 4. Return verification result
  * 
  * Key Features:
  * - State-specific registry lookup
  * - Member validation (name, DOB, employment)
- * - MSR approval gate (human-in-the-loop)
- * - Final decision after approval
+ * - Immediate result return
  */
 
-import { sleep, FatalError } from 'workflow';
 import {
   copyMemberIdentifier,
   queryStateRegistry,
   validateMemberDetails,
-  TeacherVerificationInput,
-  TeacherVerificationResult,
-} from './steps';
-import { teacherVerificationApprovalHook } from './hooks';
-import { sendApprovalRequest } from './steps';
-
-const BASE = process.env.APP_BASE_URL ?? 'http://localhost:3000';
+} from './operations';
+import type { TeacherVerificationInput, TeacherVerificationResult } from './types';
 
 /**
- * Main Teacher Verification Workflow Function
+ * Main Teacher Verification Function
  * 
  * @param input - Member details and state
- * @returns Verification result with approval status
+ * @returns Verification result
  */
 export async function teacherVerification(input: TeacherVerificationInput): Promise<TeacherVerificationResult> {
-  'use workflow'
-  
   const startTime = Date.now();
   const verificationId = `teacher-verification:${input.msrId}:${Date.now()}`;
   
@@ -92,54 +85,13 @@ export async function teacherVerification(input: TeacherVerificationInput): Prom
     employmentStatus: validation.registryMatch.employmentStatus,
   });
   
-  // ========== Step 4: Approval Gate ==========
-  // MSR must approve the verification before finalizing
-  const approvalToken = `${verificationId}:approval`;
-  const approval = teacherVerificationApprovalHook.create({ token: approvalToken });
-  
-  await sendApprovalRequest(
-    approvalToken,
-    `msr-${input.msrId}@example.com`,
-    'teacher_verification',
-    {
-      verificationId,
-      memberId: identifier.memberId,
-      memberName: identifier.memberName,
-      state: input.state,
-      registryMatch: validation.registryMatch,
-      validationResult: validation,
-    }
-  );
-  
-  const approvalTimeout = '1h';
-  const approvalDecision = await Promise.race([
-    approval,
-    (async () => {
-      await sleep(approvalTimeout);
-      return { approved: false, comment: 'Approval timeout' };
-    })(),
-  ]);
-  
-  if (!approvalDecision.approved) {
-    return {
-      verificationId,
-      memberId: identifier.memberId,
-      memberName: identifier.memberName,
-      state: input.state,
-      verified: validation.verified,
-      approved: false,
-      registryMatch: validation.registryMatch,
-      approval: approvalDecision,
-      error: 'Verification not approved by MSR',
-    };
-  }
-  
+  // ========== Step 4: Return Result ==========
+  // Return verification result immediately
   const totalLatency = Date.now() - startTime;
   
   console.log(`[Teacher Verification] Complete`, {
     verificationId,
     verified: validation.verified,
-    approved: approvalDecision.approved,
     totalLatency,
   });
   
@@ -149,9 +101,7 @@ export async function teacherVerification(input: TeacherVerificationInput): Prom
     memberName: identifier.memberName,
     state: input.state,
     verified: validation.verified,
-    approved: true,
     registryMatch: validation.registryMatch,
-    approval: approvalDecision,
   };
 }
 

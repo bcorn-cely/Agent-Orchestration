@@ -1,62 +1,15 @@
 /**
- * Deal Verification Workflow Steps
+ * Deal Verification Operations
  * 
- * This file defines all durable steps used in the deal verification workflow.
+ * Helper functions for deal verification operations.
  * Supports two modes: Playwright (browser automation) or HTTP probes (fallback).
- * 
- * Workflow Flow Overview:
- * 1. Fetch offer details from Shop or email
- * 2. Verify offer using Playwright (if available) or HTTP probes
- * 3. Classify failures (technical vs business logic)
- * 4. Persist artifacts (HTML snippets, JSON captures)
  */
-
-import { FatalError, fetch } from 'workflow';
-
-/**
- * Input type for deal verification workflow
- */
-export type DealVerificationInput = {
-  offerId?: string;
-  shopUrl?: string;
-  emailContent?: string;
-  partnerUrl: string;
-  expectedDiscount?: string;
-  expectedPrice?: number;
-};
-
-/**
- * Result type returned from the deal verification workflow
- */
-export type DealVerificationResult = {
-  offerId?: string;
-  verified: boolean;
-  offerValid: boolean;
-  failureType?: 'technical' | 'business_logic';
-  error?: string;
-  artifacts: {
-    htmlSnippet?: string;
-    jsonCapture?: any;
-    screenshots?: string[];
-  };
-  verificationDetails: {
-    method: 'playwright' | 'http_probe';
-    offerFound: boolean;
-    discountMatches: boolean;
-    priceMatches: boolean;
-    executionTime: number;
-    stepCount: number;
-  };
-};
 
 const BASE = process.env.APP_BASE_URL ?? 'http://localhost:3000';
 const SHOP_API = process.env.DEAL_VERIFICATION_SHOP ?? `${BASE}/api/mocks/deal-verification/shop-offer`;
 
-// Feature flag: Use HTTP probes only (skip Playwright)
-const USE_HTTP_PROBES_ONLY = process.env.USE_HTTP_PROBES_ONLY === 'true';
-
 /**
- * Step 1: Fetch Offer Details
+ * Fetch Offer Details
  * 
  * Fetches offer information from Shop or parses from email content.
  */
@@ -65,8 +18,6 @@ export async function fetchOfferDetails(input: {
   shopUrl?: string;
   emailContent?: string;
 }) {
-  "use step";
-  
   if (input.emailContent) {
     // Parse offer from email content
     // In a real implementation, this would use NLP to extract offer details
@@ -86,18 +37,17 @@ export async function fetchOfferDetails(input: {
     });
     
     if (!res.ok) {
-      throw new FatalError(`Failed to fetch offer: ${res.status}`);
+      throw new Error(`Failed to fetch offer: ${res.status}`);
     }
     
     return res.json();
   }
   
-  throw new FatalError('No offer source provided (offerId, shopUrl, or emailContent)');
+  throw new Error('No offer source provided (offerId, shopUrl, or emailContent)');
 }
-fetchOfferDetails.maxRetries = 3;
 
 /**
- * Step 2: Verify Offer with Playwright
+ * Verify Offer with Playwright
  * 
  * Uses browser automation to simulate customer journey and verify offer.
  */
@@ -106,8 +56,6 @@ export async function verifyOfferWithPlaywright(input: {
   expectedDiscount?: string;
   expectedPrice?: number;
 }) {
-  "use step";
-  
   // In a real implementation, this would use Playwright to:
   // 1. Navigate to partner URL
   // 2. Search for products
@@ -142,10 +90,9 @@ export async function verifyOfferWithPlaywright(input: {
     },
   };
 }
-verifyOfferWithPlaywright.maxRetries = 2;
 
 /**
- * Step 3: Verify Offer with HTTP Probe
+ * Verify Offer with HTTP Probe
  * 
  * Fallback mode: Uses HTTP requests and content extraction.
  */
@@ -154,8 +101,6 @@ export async function verifyOfferWithHttpProbe(input: {
   expectedDiscount?: string;
   expectedPrice?: number;
 }) {
-  "use step";
-  
   // In a real implementation, this would:
   // 1. Fetch partner URL
   // 2. Extract metadata (JSON-LD, Open Graph)
@@ -193,5 +138,4 @@ export async function verifyOfferWithHttpProbe(input: {
     },
   };
 }
-verifyOfferWithHttpProbe.maxRetries = 3;
 
