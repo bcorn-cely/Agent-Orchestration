@@ -6,8 +6,8 @@ import "./globals.css"
 
 
 export const metadata: Metadata = {
-  title: "Coupa Intelligence - AI Assistant",
-  description: "Newfront Insurance Internal AI Assistant",
+  title: "AI Workflow Platform - Demo",
+  description: "Enterprise AI workflow orchestration and automation platform",
   generator: "v0.app",
   icons: {
     icon: [

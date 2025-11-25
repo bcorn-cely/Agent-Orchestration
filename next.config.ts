@@ -7,15 +7,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/newfront/contracts',
-        permanent: true,
-      },
-    ]
-  },
 }
 
 const workflowConfig = {

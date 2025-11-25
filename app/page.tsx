@@ -14,7 +14,7 @@ import {
   BarChart3,
   Zap
 } from "lucide-react"
-import { ContractChatbotWrapper } from "@/components/feature/contract-chatbot-wrapper"
+import { ContractChatbotWrapper } from "@/components/feature/chatbot-wrapper"
 import {
   Table,
   TableBody,
@@ -39,7 +39,7 @@ const mockContracts = [
   {
     id: "contract:002",
     type: "MSA",
-    parties: "Newfront / VendorCo",
+    parties: "Acme Corp / VendorCo",
     status: "review",
     assignee: "contract_manager",
     stage: "Manager Review",
@@ -49,7 +49,7 @@ const mockContracts = [
   {
     id: "contract:003",
     type: "SOW",
-    parties: "ClientCo / Newfront",
+    parties: "ClientCo / TechCorp",
     status: "approval",
     assignee: "legal",
     stage: "Legal Approval",
@@ -59,7 +59,7 @@ const mockContracts = [
   {
     id: "contract:004",
     type: "NDA",
-    parties: "PartnerInc / Newfront",
+    parties: "PartnerInc / TechCorp",
     status: "approved",
     assignee: "legal",
     stage: "Archived",
@@ -90,7 +90,7 @@ export default function ContractsPage() {
               <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
                 <Scale className="w-4 h-4 text-white" />
               </div>
-              <span className="text-xl font-bold">Newfront Contracts</span>
+              <span className="text-xl font-bold">Contract Management</span>
             </div>
 
             <div className="hidden md:flex items-center gap-8">

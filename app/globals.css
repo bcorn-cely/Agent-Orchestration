@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated to match Newfront brand - light theme for contracts page visibility */
+  /* Light theme for contracts page visibility */
   --background: oklch(0.98 0.01 80); /* Light cream background */
   --foreground: oklch(0.15 0.02 200); /* Dark text for readability */
   --card: oklch(1 0 0); /* White card background */
@@ -114,7 +114,7 @@
 }
 
 @theme inline {
-  /* Using Cormorant Garamond for elegant serif headings matching Newfront style */
+  /* Using Cormorant Garamond for elegant serif headings */
   /* Geist font for Greenlight theme */
   --font-sans: "Geist", "Geist Fallback", "Inter", "Inter Fallback", system-ui, -apple-system, sans-serif;
   --font-serif: "Cormorant Garamond", "Times New Roman", serif;

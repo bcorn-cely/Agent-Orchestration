@@ -26,14 +26,14 @@ function ContractApprovalContent() {
     setError(null)
 
     try {
-      const response = await fetch("/api/workflows/newfront/contracts/approve", {
+      const response = await fetch("/api/workflows/contract-management/contracts/approve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token,
           approved: approvedValue,
           comment: comment.trim() || undefined,
-          by: "legal@newfront.com", // In production, get from auth
+          by: "legal@example.com", // In production, get from auth
         }),
       })
 
