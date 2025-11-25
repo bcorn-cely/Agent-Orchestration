@@ -12,10 +12,10 @@ export async function POST(req: RequestWithResponse) {
   const token = rawToken.replace(/['"]+$/, '').trim();
   
   try {    
-    // return req.respondWith(Response.json(
-    //   { approved, comment, by, budgetAdjustment, alternativeChannels },
-    //   { status: 200 }
-    const result = await campaignApprovalHook.resume(token, { approved, comment, by, budgetAdjustment, alternativeChannels });
+    console.log('raw token ', rawToken);
+    console.log('token ', token);
+    const result = await campaignApprovalHook.resume(rawToken, { approved, comment, by, budgetAdjustment, alternativeChannels });
+    console.log('campaign approval hook result ', result);
     return Response.json({ ok: true, runId: result?.runId });
   
   } catch (error) {

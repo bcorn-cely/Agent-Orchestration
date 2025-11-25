@@ -15,7 +15,7 @@ export async function campaignAnalysis(input: CampaignAnalysisInput) {
   'use workflow'
 
   const writable = getWritable();
-  const analysisId = `analysis:${input.analystId}:${Date.now()}`;
+  const analysisId = `analysis:${input.analystId}}`;
 
   // Step 1: Fetch campaign data
   await aiTell(writable, `Fetching campaign data and performance metrics...`, { token: analysisId });

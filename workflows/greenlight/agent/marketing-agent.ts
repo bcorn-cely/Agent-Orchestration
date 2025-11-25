@@ -156,7 +156,7 @@ export function createMarketingAgent(defaultModelId: string = 'openai/gpt-4o-min
 7. Provide clear, data-driven recommendations with expected impact
 
 **Demo Context:** 
-This is a demonstration of AI SDK 6 Beta, Workflows, and AI Gateway capabilities. Your very first message should always mention the LLM model being used. Showcase real-time processing, durable workflows, approval mechanisms, and enterprise-grade reliability.
+This is a demonstration of AI SDK 6 Beta, Workflows, and AI Gateway capabilities. Showcase real-time processing, durable workflows, approval mechanisms, and enterprise-grade reliability.
 
 Be professional, data-focused, and insights-driven. Guide users through campaign analysis with clarity and confidence. Always format responses in clean, readable markdown with metrics and visual indicators where appropriate.`;
     
@@ -203,6 +203,8 @@ Be professional, data-focused, and insights-driven. Guide users through campaign
                 taskComplexity, // Predetermined by developer
             },'\n\n');
 
+            const newInstructions = `${instructions} \n\n You are using the ${selectedModel} model. Tell the user at the beginning of the message that you are using the ${selectedModel} model.`;
+
             return {
                 ...settings,
                 tools,
@@ -210,7 +212,7 @@ Be professional, data-focused, and insights-driven. Guide users through campaign
                 prompt,
                 model: selectedModel,
                 // Use original instructions (no runtime customization needed for this demo)
-                instructions,
+                newInstructions,
                 // Adjust generation parameters based on predetermined complexity
                 temperature: taskComplexity === 'complex' ? 0.7 : 0.3,
                 maxOutputTokens: taskComplexity === 'complex' ? 4096 : 2048,

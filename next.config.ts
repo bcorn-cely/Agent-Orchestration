@@ -11,7 +11,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/greenlight',
+        destination: '/newfront/contracts',
         permanent: true,
       },
     ]

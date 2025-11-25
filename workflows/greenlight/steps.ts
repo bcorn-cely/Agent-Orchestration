@@ -85,6 +85,11 @@ export async function fetchCampaignData(input: {
 }
 fetchCampaignData.maxRetries = 3;
 
+
+
+
+
+
 export async function checkBudgetConstraints(input: {
   campaignId: string;
   requestedBudget?: number;
@@ -108,6 +113,13 @@ export async function checkBudgetConstraints(input: {
 }
 checkBudgetConstraints.maxRetries = 3;
 
+
+
+
+
+
+
+
 export async function generateForecast(input: {
   campaignId: string;
   historicalData: any;
@@ -128,6 +140,9 @@ export async function generateForecast(input: {
   return res.json();
 }
 generateForecast.maxRetries = 5;
+
+
+
 
 export async function generateReport(input: {
   analysisId: string;
