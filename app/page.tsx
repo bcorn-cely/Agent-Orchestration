@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { 
   Building2,
   ShoppingBag,
@@ -10,7 +11,11 @@ import {
   BookOpen,
   Terminal,
   FileCode,
-  Settings
+  Settings,
+  ExternalLink,
+  Rocket,
+  Lightbulb,
+  Link as LinkIcon
 } from "lucide-react"
 
 export default function HomePage() {
@@ -27,6 +32,9 @@ export default function HomePage() {
               <span className="text-xl font-bold">Shareable Gateway Workflows</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
+              <a href="#ai-sdk-6" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                AI SDK 6 Beta
+              </a>
               <a href="#workflows" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Workflows
               </a>
@@ -52,6 +60,217 @@ export default function HomePage() {
             AI-powered workflows with parallel execution, tool calling, and intelligent routing.
           </p>
         </div>
+
+        {/* AI SDK 6 Beta Section */}
+        <section id="ai-sdk-6" className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <Rocket className="w-8 h-8 text-blue-600" />
+            <h2 className="text-3xl font-bold">AI SDK 6 Beta - Quick Start Guide</h2>
+            <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">Beta</Badge>
+          </div>
+          
+          <Card className="p-6 border-blue-500/20 mb-6">
+            <p className="text-muted-foreground mb-4">
+              <strong>AI SDK 6 Beta</strong> is a TypeScript toolkit designed to streamline the development of AI-powered applications 
+              and agents. This demo uses <code className="text-xs bg-muted px-2 py-1 rounded">ai@6.0.0-beta.114</code> to showcase 
+              production-ready patterns for building AI workflows.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://v6.ai-sdk.dev/docs" target="_blank" rel="noopener noreferrer">
+                  Official Docs <ExternalLink className="w-3 h-3 ml-1" />
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://v6.ai-sdk.dev/docs/getting-started" target="_blank" rel="noopener noreferrer">
+                  Getting Started <ExternalLink className="w-3 h-3 ml-1" />
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://v6.ai-sdk.dev/docs/reference" target="_blank" rel="noopener noreferrer">
+                  API Reference <ExternalLink className="w-3 h-3 ml-1" />
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://github.com/vercel/ai" target="_blank" rel="noopener noreferrer">
+                  GitHub <ExternalLink className="w-3 h-3 ml-1" />
+                </a>
+              </Button>
+            </div>
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <Card className="p-6 border-blue-500/20">
+              <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-blue-600" />
+                Key Features
+              </h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• <strong>ToolLoopAgent</strong> - Unified interface for building agents with tool calling</li>
+                <li>• <strong>Tool Execution Approval</strong> - Human-in-the-loop workflows</li>
+                <li>• <strong>Agent.generate()</strong> - Non-streaming agent execution</li>
+                <li>• <strong>Agent.stream()</strong> - Streaming agent execution</li>
+                <li>• <strong>Type-Safe Tools</strong> - Zod schemas for tool definitions</li>
+                <li>• <strong>Model Routing</strong> - Intelligent model selection</li>
+              </ul>
+            </Card>
+
+            <Card className="p-6 border-green-500/20">
+              <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+                <Rocket className="w-5 h-5 text-green-600" />
+                Quick Installation
+              </h3>
+              <div className="bg-muted p-4 rounded-lg font-mono text-sm mb-3">
+                <div>npm install ai@beta</div>
+                <div className="mt-2"># Or with providers:</div>
+                <div>npm install ai@beta @ai-sdk/openai@beta</div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                This project uses <code className="text-xs bg-background px-1 py-0.5 rounded">ai@6.0.0-beta.114</code>
+              </p>
+            </Card>
+          </div>
+
+          <Card className="p-6 border-purple-500/20 mb-6">
+            <h3 className="text-xl font-bold mb-4">Essential Resources for Building Pilots</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <h4 className="font-semibold mb-2 text-sm">Documentation & Guides</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>
+                    <a href="https://v6.ai-sdk.dev/docs/introduction/announcing-ai-sdk-6-beta" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> Announcing AI SDK 6 Beta
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://v6.ai-sdk.dev/docs/getting-started" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> Getting Started Guide
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://v6.ai-sdk.dev/docs/reference" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> API Reference
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://ai-sdk.dev/docs/agents/overview" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> Agents Documentation
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2 text-sm">Code Examples & Patterns</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>
+                    <a href="https://v6.ai-sdk.dev/docs/examples" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> Code Examples
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/vercel/ai/tree/main/examples" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> GitHub Examples
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://v6.ai-sdk.dev/docs/concepts/tools" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> Tools & Tool Calling
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://v6.ai-sdk.dev/docs/concepts/model-routing" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                      <LinkIcon className="w-3 h-3" /> Model Routing
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-6 border-orange-500/20">
+            <h3 className="text-xl font-bold mb-4">Quick Code Example - ToolLoopAgent</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Here's a minimal example to get you started quickly:
+            </p>
+            <div className="bg-muted p-4 rounded-lg font-mono text-xs overflow-x-auto">
+              <div className="text-muted-foreground mb-2">// Install: npm install ai@beta</div>
+              <div className="mb-2">
+                <span className="text-blue-400">import</span> <span className="text-green-400">{'{'}</span> ToolLoopAgent, tool <span className="text-green-400">{'}'}</span> <span className="text-blue-400">from</span> <span className="text-yellow-400">'ai'</span>;
+              </div>
+              <div className="mb-2">
+                <span className="text-blue-400">import</span> <span className="text-green-400">{'{'}</span> openai <span className="text-green-400">{'}'}</span> <span className="text-blue-400">from</span> <span className="text-yellow-400">'@ai-sdk/openai'</span>;
+              </div>
+              <div className="mb-2">
+                <span className="text-blue-400">import</span> <span className="text-green-400">{'{'}</span> z <span className="text-green-400">{'}'}</span> <span className="text-blue-400">from</span> <span className="text-yellow-400">'zod'</span>;
+              </div>
+              <div className="mb-4"></div>
+              <div className="mb-2">
+                <span className="text-blue-400">const</span> <span className="text-purple-400">agent</span> = <span className="text-blue-400">new</span> <span className="text-green-400">ToolLoopAgent</span>(<span className="text-green-400">{'{'}</span>
+              </div>
+              <div className="ml-4 mb-2">
+                model: <span className="text-green-400">openai</span>(<span className="text-yellow-400">'gpt-4'</span>),
+              </div>
+              <div className="ml-4 mb-2">
+                instructions: <span className="text-yellow-400">'You are a helpful assistant.'</span>,
+              </div>
+              <div className="ml-4 mb-2">
+                tools: <span className="text-green-400">{'{'}</span>
+              </div>
+              <div className="ml-8 mb-2">
+                myTool: <span className="text-green-400">tool</span>(<span className="text-green-400">{'{'}</span>
+              </div>
+              <div className="ml-12 mb-2">
+                description: <span className="text-yellow-400">'Tool description'</span>,
+              </div>
+              <div className="ml-12 mb-2">
+                inputSchema: <span className="text-green-400">z.object</span>(<span className="text-green-400">{'{'}</span>
+              </div>
+              <div className="ml-16 mb-2">
+                param: <span className="text-green-400">z.string</span>()
+              </div>
+              <div className="ml-12 mb-2">
+                <span className="text-green-400">{'}'}</span>),
+              </div>
+              <div className="ml-12 mb-2">
+                execute: <span className="text-blue-400">async</span> (<span className="text-green-400">{'{'}</span> <span className="text-purple-400">param</span> <span className="text-green-400">{'}'}</span>) =&gt; <span className="text-green-400">{'{'}</span>
+              </div>
+              <div className="ml-16 mb-2">
+                <span className="text-blue-400">return</span> <span className="text-yellow-400">`Result: </span><span className="text-green-400">{'${'}</span><span className="text-purple-400">param</span><span className="text-green-400">{'}'}</span><span className="text-yellow-400">`</span>;
+              </div>
+              <div className="ml-12 mb-2">
+                <span className="text-green-400">{'}'}</span>
+              </div>
+              <div className="ml-8 mb-2">
+                <span className="text-green-400">{'}'}</span>
+              </div>
+              <div className="ml-4 mb-2">
+                <span className="text-green-400">{'}'}</span>);
+              </div>
+              <div className="mb-4"></div>
+              <div className="mb-2">
+                <span className="text-blue-400">const</span> <span className="text-green-400">result</span> = <span className="text-blue-400">await</span> <span className="text-purple-400">agent</span>.<span className="text-green-400">generate</span>(<span className="text-green-400">{'{'}</span>
+              </div>
+              <div className="ml-4 mb-2">
+                prompt: <span className="text-yellow-400">'User request here'</span>
+              </div>
+              <div className="mb-2">
+                <span className="text-green-400">{'}'}</span>);
+              </div>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://v6.ai-sdk.dev/docs/concepts/agents" target="_blank" rel="noopener noreferrer">
+                  Learn More About Agents <ExternalLink className="w-3 h-3 ml-1" />
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://v6.ai-sdk.dev/docs/concepts/tools" target="_blank" rel="noopener noreferrer">
+                  Learn About Tools <ExternalLink className="w-3 h-3 ml-1" />
+                </a>
+              </Button>
+            </div>
+          </Card>
+        </section>
 
         {/* Architecture Overview */}
         <section className="mb-12">
@@ -335,13 +554,68 @@ export default function HomePage() {
         {/* Additional Resources */}
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-4">Additional Resources</h2>
-          <Card className="p-6 border-blue-500/20">
-            <ul className="space-y-2 text-muted-foreground">
-              <li>• <a href="https://sdk.vercel.ai/docs" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">AI SDK Documentation</a></li>
-              <li>• <a href="https://vercel.com/docs/workflows" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Vercel Workflows Documentation</a></li>
-              <li>• <a href="https://nextjs.org/docs" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Next.js Documentation</a></li>
-            </ul>
-          </Card>
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="p-6 border-blue-500/20">
+              <h3 className="text-lg font-bold mb-3">AI SDK 6 Beta</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <a href="https://v6.ai-sdk.dev/docs" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> Official Documentation
+                  </a>
+                </li>
+                <li>
+                  <a href="https://v6.ai-sdk.dev/docs/getting-started" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> Getting Started Guide
+                  </a>
+                </li>
+                <li>
+                  <a href="https://v6.ai-sdk.dev/docs/reference" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> API Reference
+                  </a>
+                </li>
+                <li>
+                  <a href="https://v6.ai-sdk.dev/docs/concepts/agents" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> Agents Guide
+                  </a>
+                </li>
+                <li>
+                  <a href="https://v6.ai-sdk.dev/docs/concepts/tools" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> Tools Guide
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/vercel/ai" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> GitHub Repository
+                  </a>
+                </li>
+              </ul>
+            </Card>
+            <Card className="p-6 border-green-500/20">
+              <h3 className="text-lg font-bold mb-3">Related Technologies</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <a href="https://vercel.com/docs/workflows" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> Vercel Workflows Documentation
+                  </a>
+                </li>
+                <li>
+                  <a href="https://nextjs.org/docs" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> Next.js Documentation
+                  </a>
+                </li>
+                <li>
+                  <a href="https://zod.dev" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> Zod Schema Validation
+                  </a>
+                </li>
+                <li>
+                  <a href="https://v6.ai-sdk.dev/docs/introduction/announcing-ai-sdk-6-beta" className="text-blue-600 hover:underline flex items-center gap-1" target="_blank" rel="noopener noreferrer">
+                    <LinkIcon className="w-3 h-3" /> AI SDK 6 Beta Announcement
+                  </a>
+                </li>
+              </ul>
+            </Card>
+          </div>
         </section>
       </div>
     </div>
