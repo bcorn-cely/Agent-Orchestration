@@ -12,22 +12,61 @@ import { createUnifiedOrchestratorAgent } from '@/agents/unified-orchestrator/or
  */
 export async function POST(req: Request) {
   const body = await req.json();
-  const { model: modelId } = body as {
+  const { workflow, model: modelId, ...workflowInput } = body as {
+    workflow: 'org-validation' | 'deal-verification' | 'teacher-verification';
     model?: string;
+    [key: string]: any;
   };
 
-  // Hardcoded prompt for orchestrator
-  const prompt = `You are a unified AI assistant that helps with multiple workflows. 
-  
-Available workflows:
-1. Organization Validation - Validate organizations by domain using parallel worker agents
-2. Deal Verification - Verify retail deals/offers with Playwright or HTTP probes
-3. Teacher Verification - Verify teacher community membership via state registry
+  // Validate workflow name is provided
+  if (!workflow) {
+    return Response.json(
+      { error: 'Workflow name is required. Must be one of: org-validation, deal-verification, teacher-verification' },
+      { status: 400 }
+    );
+  }
 
-Understand what the user wants to accomplish, ask clarifying questions to gather required information, and use the appropriate tool to execute the workflow.`;
+  // Map workflow names to tool names and create prompt
+  const workflowMap = {
+    'org-validation': {
+      toolName: 'orgValidate',
+      description: 'Organization Validation - Validate organizations by domain using parallel worker agents',
+      requiredFields: ['domain'],
+    },
+    'deal-verification': {
+      toolName: 'dealVerify',
+      description: 'Deal Verification - Verify retail deals/offers with Playwright or HTTP probes',
+      requiredFields: ['partnerUrl'],
+    },
+    'teacher-verification': {
+      toolName: 'teacherVerify',
+      description: 'Teacher Verification - Verify teacher community membership via state registry',
+      requiredFields: ['state', 'msrId'],
+    },
+  };
+
+  const selectedWorkflow = workflowMap[workflow];
+  if (!selectedWorkflow) {
+    return Response.json(
+      { error: `Invalid workflow: ${workflow}. Must be one of: org-validation, deal-verification, teacher-verification` },
+      { status: 400 }
+    );
+  }
+
+  // Build prompt that instructs the agent to execute the specific workflow
+  const prompt = `Execute the ${selectedWorkflow.description}.
+
+You must use the ${selectedWorkflow.toolName} tool with the provided input data.
+
+Input data provided:
+${JSON.stringify(workflowInput, null, 2)}
+
+Execute the workflow immediately using the ${selectedWorkflow.toolName} tool.`;
 
   console.log('[Unified Orchestrator API] Received request', {
+    workflow,
     modelId: modelId || 'No Model Selected',
+    hasInput: Object.keys(workflowInput).length > 0,
   });
 
   // Create unified orchestrator agent
