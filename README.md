@@ -30,12 +30,6 @@ The application includes **4 main workflows**:
 3. **Teacher Verification** (Agent-based)
 4. **Contract Management** (Referenced, not implemented in this repo)
 
-### Database & Persistence
-
-- **Drizzle ORM**: Type-safe database operations
-- **PostgreSQL**: Chat and message persistence
-- **Schema**: Chats and messages tables with timestamps
-
 ## 📁 Project Structure
 
 ```
@@ -71,16 +65,13 @@ workflows-shareable/
 │   │   └── mocks/                  # Mock API endpoints for testing
 │   └── page.tsx                    # Main landing page
 ├── components/
-│   ├── feature/                    # Feature components
-│   │   └── multi-workflow-chatbot.tsx  # Chat UI component
 │   └── ui/                         # shadcn/ui components
 ├── db/                             # Database layer
 │   ├── schema.ts                   # Drizzle schema
 │   └── operations/                 # DB operations
 └── lib/
-    ├── ai/
-    │   └── provider.ts             # AI gateway provider
-    └── chat.ts                     # Chat utilities
+    └── ai/
+        └── provider.ts             # AI gateway provider
 ```
 
 ## 🤖 Workflows
@@ -340,44 +331,7 @@ import { gateway } from 'ai';
 export const gatewayProvider = gateway('anthropic/claude-4-5-sonnet');
 ```
 
-## 🗄️ Database Schema
-
-### Chats Table
-
-```typescript
-{
-  id: string (primary key)
-  title: string | null
-  createdAt: timestamp
-  updatedAt: timestamp
-}
-```
-
-### Messages Table
-
-```typescript
-{
-  id: string (primary key)
-  chatId: string (foreign key → chats.id)
-  role: string
-  content: string
-  createdAt: timestamp
-}
-```
-
 ## 🎨 UI Components
-
-### Multi-Workflow Chatbot
-
-**Location**: `components/feature/multi-workflow-chatbot.tsx`
-
-A comprehensive chat interface that supports:
-- Multiple workflow selection
-- Model selection (Auto, GPT-4o Mini, GPT-4o, Claude Sonnet 4.5)
-- Tool call visualization
-- Approval workflows (for contract management)
-- Message persistence
-- Real-time streaming
 
 ### shadcn/ui Components
 
@@ -393,9 +347,6 @@ Full suite of UI components including:
 ### Environment Variables
 
 ```env
-# Database
-DATABASE_URL=postgresql://...
-
 # AI Gateway (optional)
 AI_GATEWAY_BASE_URL=https://ai-gateway.vercel.sh/v1
 AI_GATEWAY_API_KEY=...
@@ -427,9 +378,7 @@ export default withWorkflow(nextConfig, workflowConfig);
 - **React 19.2.0**: UI library
 - **AI SDK 6.0.0-beta.114**: AI SDK for agents and tools
 - **Vercel Workflows 4.0.1-beta.12**: Workflow orchestration
-- **Drizzle ORM 0.44.7**: Type-safe database queries
 - **Zod 3.25.76**: Schema validation
-- **PostgreSQL**: Database
 
 ### UI Dependencies
 
@@ -443,7 +392,6 @@ export default withWorkflow(nextConfig, workflowConfig);
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL database
 - pnpm (or npm/yarn)
 
 ### Installation
@@ -455,9 +403,6 @@ pnpm install
 # Set up environment variables
 cp .env.example .env
 # Edit .env with your configuration
-
-# Run database migrations
-pnpm drizzle-kit push
 
 # Start development server
 pnpm dev
