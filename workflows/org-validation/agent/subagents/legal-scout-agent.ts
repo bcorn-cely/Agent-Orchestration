@@ -46,17 +46,24 @@ After using the tool, confirm that you have retrieved the information.`,
           status: z.enum(['active', 'inactive', 'unknown']),
         }),
         execute: async ({ domain }) => {
-          const res = await fetch(`${LEGAL_API}`, {
-            method: 'POST',
-            body: JSON.stringify({ domain }),
-            headers: { 'content-type': 'application/json' },
-          });
-          
-          if (!res.ok) {
-            throw new FatalError(`Legal lookup API failed: ${res.status}`);
+          try {
+            const res = await fetch(`${LEGAL_API}`, {
+              method: 'POST',
+              body: JSON.stringify({ domain }),
+              headers: { 'content-type': 'application/json' },
+            });
+            
+            if (!res || !res.ok) {
+              throw new FatalError(`Legal lookup API failed: ${res?.status || 'No response'}`);
+            }
+            
+            return res.json();
+          } catch (error) {
+            if (error instanceof FatalError) {
+              throw error;
+            }
+            throw new FatalError(`Legal lookup failed: ${error instanceof Error ? error.message : String(error)}`);
           }
-          
-          return res.json();
         },
       }),
     },
@@ -79,65 +86,45 @@ export async function legalScoutWorker(domain: string) {
 Use the lookupLegalInfo tool to get this information.`,
     });
     
-    // Extract tool result - the tool returns the data we need
-    let legalResult: any = null;
-    
-    // Check tool calls for the result - tool results might be in different locations
-    if (result.toolCalls && result.toolCalls.length > 0) {
-      for (const toolCall of result.toolCalls) {
-        if (toolCall.toolName === 'lookupLegalInfo') {
-          // Try accessing result through type assertion
-          const callWithResult = toolCall as any;
-          if (callWithResult.result) {
-            legalResult = callWithResult.result;
-            break;
+    // Extract tool result from result.steps (AI SDK 6 ToolLoopAgent structure)
+    const steps = (result as any).steps;
+    if (!steps || !Array.isArray(steps)) {
+      throw new FatalError(`Legal Scout agent result missing steps array for domain: ${domain}`);
+    }
+
+    for (const step of steps) {
+      // Check step.content array
+      if (step.content) {
+        const toolResult = step.content.find((item: any) => 
+          item.type === 'tool-result' && item.toolName === 'lookupLegalInfo'
+        );
+        if (toolResult) {
+          if (toolResult.output?.type === 'error-text') {
+            throw new FatalError(`Legal lookup tool error: ${toolResult.output.value}`);
+          }
+          return toolResult.output?.value || toolResult.output;
+        }
+      }
+      
+      // Check step.messages array
+      if (step.messages) {
+        for (const message of step.messages) {
+          if (message.role === 'tool' && message.content) {
+            const toolResult = message.content.find((item: any) => 
+              item.type === 'tool-result' && item.toolName === 'lookupLegalInfo'
+            );
+            if (toolResult) {
+              if (toolResult.output?.type === 'error-text') {
+                throw new FatalError(`Legal lookup tool error: ${toolResult.output.value}`);
+              }
+              return toolResult.output?.value || toolResult.output;
+            }
           }
         }
       }
     }
     
-    // Fallback: check if result has toolResults property
-    if (!legalResult && (result as any).toolResults) {
-      const toolResults = (result as any).toolResults;
-      if (toolResults.lookupLegalInfo) {
-        legalResult = toolResults.lookupLegalInfo;
-      }
-    }
-    
-    // Another fallback: check for toolInvocations
-    if (!legalResult && (result as any).toolInvocations) {
-      const invocations = (result as any).toolInvocations;
-      const legalInvocation = invocations.find((inv: any) => inv.toolName === 'lookupLegalInfo');
-      if (legalInvocation?.result) {
-        legalResult = legalInvocation.result;
-      }
-    }
-    
-    // Last resort: try to parse from text if available
-    if (!legalResult && result.text) {
-      try {
-        const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          legalResult = JSON.parse(jsonMatch[0]);
-        }
-      } catch {
-        // Ignore JSON parse errors
-      }
-    }
-    
-    if (!legalResult) {
-      console.error('[Legal Scout] No tool result found. Result structure:', {
-        hasOutput: !!result.output,
-        hasText: !!result.text,
-        toolCallsCount: result.toolCalls?.length || 0,
-        toolCalls: result.toolCalls?.map(tc => ({ name: tc.toolName, hasResult: !!(tc as any).result })),
-        resultKeys: Object.keys(result),
-        fullResult: JSON.stringify(result, null, 2),
-      });
-      throw new FatalError(`Legal Scout agent did not return tool result for domain: ${domain}. No output generated.`);
-    }
-    
-    return legalResult;
+    throw new FatalError(`Legal Scout agent did not return tool result for domain: ${domain}. No output generated.`);
   } catch (error) {
     // Re-throw FatalErrors as-is
     if (error instanceof FatalError) {

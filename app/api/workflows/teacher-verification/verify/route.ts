@@ -13,7 +13,7 @@ import type { TeacherVerificationInput } from '@/agents/teacher-verification/typ
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { memberId, memberName, dateOfBirth, state, msrId } = body;
+    const { memberId, firstName, lastName, dateOfBirth, state, msrId } = body;
     
     if (!state || !msrId) {
       return Response.json(
@@ -22,22 +22,25 @@ export async function POST(req: Request) {
       );
     }
     
-    if (!memberId && (!memberName || !dateOfBirth)) {
+    if (!memberId && (!firstName || !lastName || !dateOfBirth)) {
       return Response.json(
-        { ok: false, error: 'Either memberId or (memberName + dateOfBirth) is required' },
+        { ok: false, error: 'Either memberId or (firstName + lastName + dateOfBirth) is required' },
         { status: 400 }
       );
     }
     
     console.log('[Teacher Verification API] Starting verification', {
       memberId,
+      firstName,
+      lastName,
       state,
       msrId,
     });
     
     const input: TeacherVerificationInput = {
       memberId,
-      memberName,
+      firstName,
+      lastName,
       dateOfBirth,
       state,
       msrId,

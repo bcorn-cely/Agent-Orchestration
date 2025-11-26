@@ -84,7 +84,8 @@ const teacherVerifyTool = tool({
   description: 'Verify a teacher community membership via state registry database lookup. Implements 3-step flow: copy ID → query registry → validate. Returns verification result immediately.',
   inputSchema: z.object({
     memberId: z.string().optional().describe('Member ID number (if available)'),
-    memberName: z.string().optional().describe('Member name (required if no memberId)'),
+    firstName: z.string().optional().describe('First name (required if no memberId)'),
+    lastName: z.string().optional().describe('Last name (required if no memberId)'),
     dateOfBirth: z.string().optional().describe('Date of birth (required if no memberId)'),
     state: z.string().describe('State code (e.g., CA, NY, TX)'),
     msrId: z.string().describe('Member Support Representative ID'),
@@ -161,23 +162,19 @@ export function createUnifiedOrchestratorAgent(defaultModelId: string = 'openai/
 
 **Available Workflows:**
 
-1. **Contract Management** - Draft contracts, detect risks, manage approvals
-   - Use contractDraft tool to start contract workflow
-   - Requires: requesterId, requesterRole, contractType, jurisdiction, product, parties, requesterEmail
-
-2. **Organization Validation** - Validate organizations by domain
+1. **Organization Validation** - Validate organizations by domain
    - Use orgValidate tool to start validation workflow
    - Uses parallel worker agents (Legal Scout, Sector Analyst, Trust Officer)
    - Requires: domain
 
-3. **Deal Verification** - Verify retail deals and offers
+2. **Deal Verification** - Verify retail deals and offers
    - Use dealVerify tool to start verification workflow
    - Supports Playwright (browser automation) or HTTP probes
    - Requires: partnerUrl, and optionally offerId/shopUrl/emailContent
 
-4. **Teacher Verification** - Verify teacher community membership
+3. **Teacher Verification** - Verify teacher community membership
    - Use teacherVerify tool to verify teacher membership
-   - Requires: state, msrId, and either memberId or (memberName + dateOfBirth)
+   - Requires: state, msrId, and either memberId and (firstName + lastName + dateOfBirth)
    - Returns verification result immediately
 
 **Your Approach:**

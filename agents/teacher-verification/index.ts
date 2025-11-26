@@ -5,7 +5,7 @@
  * Verifies teacher community membership via database lookup.
  * 
  * Implements the verification flow:
- * 1. Copy member ID (or Name + DOB)
+ * 1. Copy member ID (or First Name + Last Name + DOB)
  * 2. Query state registry database
  * 3. Validate member details and employment
  * 4. Return verification result
@@ -41,38 +41,42 @@ export async function teacherVerification(input: TeacherVerificationInput): Prom
   });
   
   // ========== Step 1: Copy Member Identifier ==========
-  // Extract member ID or Name + DOB from input
+  // Extract member ID or First Name + Last Name + DOB from input
   const identifier = await copyMemberIdentifier({
     memberId: input.memberId,
-    memberName: input.memberName,
+    firstName: input.firstName,
+    lastName: input.lastName,
     dateOfBirth: input.dateOfBirth,
   });
   
   console.log(`[Teacher Verification] Identifier copied`, {
     verificationId,
     hasMemberId: !!identifier.memberId,
-    hasName: !!identifier.memberName,
+    hasFirstName: !!identifier.firstName,
+    hasLastName: !!identifier.lastName,
   });
   
   // ========== Step 2: Query State Registry ==========
   // Query the state-specific teacher registry database
   const registryResult = await queryStateRegistry({
     memberId: identifier.memberId,
-    memberName: identifier.memberName,
+    firstName: identifier.firstName,
+    lastName: identifier.lastName,
     dateOfBirth: identifier.dateOfBirth,
     state: input.state,
   });
   
   console.log(`[Teacher Verification] Registry queried`, {
     verificationId,
-    found: registryResult?.found || false,
+    found: registryResult || false,
   });
   
   // ========== Step 3: Validate Member Details ==========
   // Validate that registry match is correct
   const validation = await validateMemberDetails({
     memberId: identifier.memberId,
-    memberName: identifier.memberName,
+    firstName: identifier.firstName,
+    lastName: identifier.lastName,
     dateOfBirth: identifier.dateOfBirth,
     registryResult,
   });
@@ -98,7 +102,8 @@ export async function teacherVerification(input: TeacherVerificationInput): Prom
   return {
     verificationId,
     memberId: identifier.memberId,
-    memberName: identifier.memberName,
+    firstName: identifier.firstName,
+    lastName: identifier.lastName,
     state: input.state,
     verified: validation.verified,
     registryMatch: validation.registryMatch,

@@ -54,14 +54,13 @@ export async function POST(req: Request) {
   }
 
   // Build prompt that instructs the agent to execute the specific workflow
-  const prompt = `Execute the ${selectedWorkflow.description}.
+  // The agent should call the tool when a workflow name is provided
+  const prompt = `Execute the ${selectedWorkflow.description} workflow now.
 
-You must use the ${selectedWorkflow.toolName} tool with the provided input data.
-
-Input data provided:
+All required information has been provided. Use the ${selectedWorkflow.toolName} tool immediately with this input:
 ${JSON.stringify(workflowInput, null, 2)}
 
-Execute the workflow immediately using the ${selectedWorkflow.toolName} tool.`;
+Do not ask questions - execute the workflow using the tool.`;
 
   console.log('[Unified Orchestrator API] Received request', {
     workflow,

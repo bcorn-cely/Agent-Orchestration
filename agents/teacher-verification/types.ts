@@ -9,7 +9,8 @@
  */
 export type TeacherVerificationInput = {
   memberId?: string;
-  memberName?: string;
+  firstName?: string;
+  lastName?: string;
   dateOfBirth?: string;
   state: string;
   msrId: string;
@@ -21,7 +22,8 @@ export type TeacherVerificationInput = {
 export type TeacherVerificationResult = {
   verificationId: string;
   memberId?: string;
-  memberName?: string;
+  firstName?: string;
+  lastName?: string;
   state: string;
   verified: boolean;
   registryMatch: {

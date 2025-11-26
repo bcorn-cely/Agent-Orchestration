@@ -44,17 +44,24 @@ After using the tool, confirm that you have retrieved the information.`,
           indicators: z.array(z.string()),
         }),
         execute: async ({ domain }) => {
-          const res = await fetch(`${TRUST_API}`, {
-            method: 'POST',
-            body: JSON.stringify({ domain }),
-            headers: { 'content-type': 'application/json' },
-          });
-          
-          if (!res.ok) {
-            throw new FatalError(`Trust lookup API failed: ${res.status}`);
+          try {
+            const res = await fetch(`${TRUST_API}`, {
+              method: 'POST',
+              body: JSON.stringify({ domain }),
+              headers: { 'content-type': 'application/json' },
+            });
+            
+            if (!res || !res.ok) {
+              throw new FatalError(`Trust lookup API failed: ${res?.status || 'No response'}`);
+            }
+            
+            return res.json();
+          } catch (error) {
+            if (error instanceof FatalError) {
+              throw error;
+            }
+            throw new FatalError(`Trust lookup failed: ${error instanceof Error ? error.message : String(error)}`);
           }
-          
-          return res.json();
         },
       }),
     },
@@ -77,65 +84,46 @@ export async function trustOfficerWorker(domain: string) {
 Use the lookupTrustInfo tool to get this information.`,
     });
     
-    // Extract tool result - the tool returns the data we need
-    let trustResult: any = null;
-    
-    // Check tool calls for the result - tool results might be in different locations
-    if (result.toolCalls && result.toolCalls.length > 0) {
-      for (const toolCall of result.toolCalls) {
-        if (toolCall.toolName === 'lookupTrustInfo') {
-          // Try accessing result through type assertion
-          const callWithResult = toolCall as any;
-          if (callWithResult.result) {
-            trustResult = callWithResult.result;
-            break;
+    // Extract tool result from result.steps (AI SDK 6 ToolLoopAgent structure)
+    const steps = (result as any).steps;
+    if (!steps || !Array.isArray(steps)) {
+      throw new FatalError(`Trust Officer agent result missing steps array for domain: ${domain}`);
+    }
+
+    for (const step of steps) {
+      // Check step.content array
+      if (step.content) {
+        const toolResult = step.content.find((item: any) => 
+          item.type === 'tool-result' && item.toolName === 'lookupTrustInfo'
+        );
+        if (toolResult) {
+          if (toolResult.output?.type === 'error-text') {
+            throw new FatalError(`Trust lookup tool error: ${toolResult.output.value}`);
+          }
+          return toolResult.output?.value || toolResult.output;
+        }
+      }
+      
+      // Check step.messages array
+      if (step.messages) {
+        for (const message of step.messages) {
+          if (message.role === 'tool' && message.content) {
+            const toolResult = message.content.find((item: any) => 
+              item.type === 'tool-result' && item.toolName === 'lookupTrustInfo'
+            );
+            if (toolResult) {
+              if (toolResult.output?.type === 'error-text') {
+                throw new FatalError(`Trust lookup tool error: ${toolResult.output.value}`);
+              }
+              return toolResult.output?.value || toolResult.output;
+            }
           }
         }
       }
     }
     
-    // Fallback: check if result has toolResults property
-    if (!trustResult && (result as any).toolResults) {
-      const toolResults = (result as any).toolResults;
-      if (toolResults.lookupTrustInfo) {
-        trustResult = toolResults.lookupTrustInfo;
-      }
-    }
+    throw new FatalError(`Trust Officer agent did not return tool result for domain: ${domain}. No output generated.`);
     
-    // Another fallback: check for toolInvocations
-    if (!trustResult && (result as any).toolInvocations) {
-      const invocations = (result as any).toolInvocations;
-      const trustInvocation = invocations.find((inv: any) => inv.toolName === 'lookupTrustInfo');
-      if (trustInvocation?.result) {
-        trustResult = trustInvocation.result;
-      }
-    }
-    
-    // Last resort: try to parse from text if available
-    if (!trustResult && result.text) {
-      try {
-        const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          trustResult = JSON.parse(jsonMatch[0]);
-        }
-      } catch {
-        // Ignore JSON parse errors
-      }
-    }
-    
-    if (!trustResult) {
-      console.error('[Trust Officer] No tool result found. Result structure:', {
-        hasOutput: !!result.output,
-        hasText: !!result.text,
-        toolCallsCount: result.toolCalls?.length || 0,
-        toolCalls: result.toolCalls?.map(tc => ({ name: tc.toolName, hasResult: !!(tc as any).result })),
-        resultKeys: Object.keys(result),
-        fullResult: JSON.stringify(result, null, 2),
-      });
-      throw new FatalError(`Trust Officer agent did not return tool result for domain: ${domain}. No output generated.`);
-    }
-    
-    return trustResult;
   } catch (error) {
     // Re-throw FatalErrors as-is
     if (error instanceof FatalError) {
