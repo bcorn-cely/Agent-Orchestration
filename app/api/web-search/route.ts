@@ -4,7 +4,7 @@
  * API endpoint to trigger web search using OpenAI's webSearch tool.
  */
 
-import { performWebSearch } from '@/lib/web-search-agent';
+import { performWebSearch } from '@/agents/web-search-agent';
 
 /**
  * POST Handler for Web Search
