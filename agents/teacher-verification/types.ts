@@ -27,11 +27,7 @@ export type TeacherVerificationResult = {
   state: string;
   verified: boolean;
   registryMatch: {
-    found: boolean;
-    nameMatch: boolean;
-    dobMatch: boolean;
-    employmentStatus: string;
-    details: any;
+    [key: string]: any;
   };
   error?: string;
 };
