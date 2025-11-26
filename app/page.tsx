@@ -386,12 +386,23 @@ export default function HomePage() {
                 </div>
               </div>
               <p className="text-muted-foreground mb-4">
-                Verifies teacher community membership via state registry database lookup. Returns results immediately.
+                Verifies teacher community membership via state registry database lookup using browser automation. Returns results immediately.
               </p>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-3 text-sm">
                 <div><strong>Location:</strong> <code className="text-xs bg-muted px-2 py-1 rounded">agents/teacher-verification/</code></div>
                 <div><strong>API:</strong> <code className="text-xs bg-muted px-2 py-1 rounded">POST /api/workflows/teacher-verification/verify</code></div>
-                <div><strong>Features:</strong> State-specific registry lookup, member validation, immediate results</div>
+                <div className="space-y-2">
+                  <div>
+                    <strong>MCP Stdio Transport:</strong> Uses stdio transport to spawn the Playwright MCP server as a subprocess, enabling dynamic tool discovery and runtime integration. This pattern can be reused with any MCP-compatible server (file systems, databases, git, custom tools) by following the same stdio transport approach.
+                  </div>
+                  <div>
+                    <strong>MCP Tools:</strong> Playwright MCP provides headless browser automation tools (<code className="text-xs bg-muted px-2 py-1 rounded">browser_navigate</code>, <code className="text-xs bg-muted px-2 py-1 rounded">browser_snapshot</code>, <code className="text-xs bg-muted px-2 py-1 rounded">browser_click</code>, etc.) to navigate state registry websites, fill search forms, and extract verification data.
+                  </div>
+                  <div>
+                    <strong>generateObject:</strong> After the agent returns its text response, we use <code className="text-xs bg-muted px-2 py-1 rounded">generateObject</code> to extract structured data. This approach allows the agent to return information naturally while ensuring type-safe, schema-validated output that adapts to variations in the agent's response format.
+                  </div>
+                </div>
+                <div><strong>Features:</strong> State-specific registry lookup, headless browser automation, MCP stdio transport, structured data extraction, member validation</div>
               </div>
             </Card>
           </div>
